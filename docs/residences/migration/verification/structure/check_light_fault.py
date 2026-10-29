@@ -1,5 +1,5 @@
 """2026-09-07 regression: re-enable the included studio light and reject 9 GL slots.
-Run from the nerv-world root. Uses a real compiled model; no graphics context needed.
+Run from the nerv-assets root. Uses a real compiled model; no graphics context needed.
 """
 import json
 import sys

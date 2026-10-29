@@ -1,4 +1,4 @@
-# 2026-09-07 apt walkthrough event integration. Run from the nerv-world root.
+# 2026-09-07 apt walkthrough event integration. Run from the nerv-assets root.
 # Uses a hidden real GLFW context and the production callbacks, no network listener.
 import sys, math, time, json
 sys.path.insert(0,'.')

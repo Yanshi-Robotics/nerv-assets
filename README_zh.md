@@ -1,4 +1,4 @@
-# nerv-world
+# nerv-assets
 
 [![许可：MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![仿真器：MuJoCo](https://img.shields.io/badge/simulator-MuJoCo-blue)](https://mujoco.org)
 
@@ -117,16 +117,13 @@ NERV 与原生漫游均可选择早晨、白天、黄昏和夜晚。夜间灯光
 
 ## 快速开始
 
-需要 Python 3.10 或更新版本。独立下载场景库后运行：
+先按 [NERV 托管构建流程](https://github.com/Yanshi-Robotics/nerv/blob/main/CONTRIBUTING.md#build-outside-the-checkout)准备仿真或验证环境，将 `NERV_PYTHON` 设为构建记录中解释器的绝对路径。环境和依赖保存在 `NERV_HOME` 下，资产源码目录不创建 `.venv`。以下命令使用独立的资产检出目录：
 
 ```bash
-git clone https://github.com/Yanshi-Robotics/nerv-world.git
-cd nerv-world
-python -m venv .venv
-source .venv/bin/activate
-pip install mujoco numpy pillow glfw
-python tools/make_house.py --scene apt
-python tools/walkthrough.py --scene apt --robot g1
+git clone https://github.com/Yanshi-Robotics/nerv-assets.git
+cd nerv-assets
+"$NERV_PYTHON" tools/make_house.py --scene apt
+"$NERV_PYTHON" tools/walkthrough.py --scene apt --robot g1
 ```
 
 首次下载时，尚未取得的家具网格会由简化几何代替。关节电器在此模式下仍保留基本体碰撞和关节。
@@ -141,16 +138,16 @@ python tools/walkthrough.py --scene apt --robot g1
 其他场景与机器人组合使用同一生成器：
 
 ```bash
-python tools/make_house.py --scene house --robot go2
-python -m mujoco.viewer --mjcf=build/house-go2.xml
-python tools/check_scene.py --scene apt
-python tools/check_interactions.py
-python tools/walkthrough.py --scene apt --selftest
-python tools/check_residences.py
+"$NERV_PYTHON" tools/make_house.py --scene house --robot go2
+"$NERV_PYTHON" -m mujoco.viewer --mjcf=build/house-go2.xml
+"$NERV_PYTHON" tools/check_scene.py --scene apt
+"$NERV_PYTHON" tools/check_interactions.py
+"$NERV_PYTHON" tools/walkthrough.py --scene apt --selftest
+"$NERV_PYTHON" tools/check_residences.py
 ```
 
-在 NERV 中，本仓库位于 `worlds/` 子模块。[house/world.yaml](house/world.yaml) 和 [apt/world.yaml](apt/world.yaml)
-定义场景与 G1 身体的组合。行走策略由独立的 [nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies) 提供；
+在 NERV 中，本仓库位于 `nerv-assets/` 子模块。[house/world.yaml](house/world.yaml) 和 [apt/world.yaml](apt/world.yaml)
+定义场景与 G1 身体的组合。策略来源通过 [NERV 策略指南](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/motion-policies.md)选择；[nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies) 保留旧版历史与迁移材料，资产仓库不存放策略权重。
 启动方式见 [NERV](https://github.com/Yanshi-Robotics/nerv)。
 
 ## 三维导览
@@ -168,12 +165,12 @@ Three.js 导览支持旋转、平移、缩放、楼层剖切、房间搜索、�
 完成[家具资产准备](docs/interactions/README.md#asset-setup)后，在本仓目录生成导览资源：
 
 ```bash
-pip install -r requirements-explore.txt
-python tools/make_house.py --scene apt
-python tools/make_house.py --scene house
-python tools/export_explore.py --scene apt
-python tools/export_explore.py --scene house
-python tools/check_explore.py
+# Declare requirements-explore.txt dependencies in the managed tool lock before export.
+"$NERV_PYTHON" tools/make_house.py --scene apt
+"$NERV_PYTHON" tools/make_house.py --scene house
+"$NERV_PYTHON" tools/export_explore.py --scene apt
+"$NERV_PYTHON" tools/export_explore.py --scene house
+"$NERV_PYTHON" tools/check_explore.py
 ```
 
 导出器将 `scene.glb` 和 `manifest.json` 写入 `.cache/explore/<scene>/`。

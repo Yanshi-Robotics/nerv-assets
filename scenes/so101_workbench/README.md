@@ -16,19 +16,19 @@ These images show settled initial states. The scenes provide physics and measure
 
 ## Generate and replace objects
 
-From the NERV checkout, using its simulation environment:
+From the NERV checkout, set `NERV_PYTHON` to the absolute Python interpreter path of a managed simulation or validation environment reported by NERV. Keep that environment under `NERV_HOME`; do not create `.venv` in this checkout. Then run:
 
 ```bash
-.venv/bin/python worlds/tools/make_workbench.py --all
-.venv/bin/python worlds/tools/check_workbench.py
+"$NERV_PYTHON" nerv-assets/tools/make_workbench.py --all
+"$NERV_PYTHON" nerv-assets/tools/check_workbench.py
 ```
 
-The generator writes the MJCF and metadata to `worlds/build/`, and updates the corresponding `world.yaml` and task guidance. Change the source [config.json](config.json) and [objects.json](objects.json), then regenerate. Generated XML and registry descriptors should not be edited by hand.
+The generator writes the MJCF and metadata to `nerv-assets/build/`, and updates the corresponding `world.yaml` and task guidance. Change the source [config.json](config.json) and [objects.json](objects.json), then regenerate. Generated XML and registry descriptors should not be edited by hand.
 
 Replace the single task's `snack` slot with a cloth sheet:
 
 ```bash
-.venv/bin/python worlds/tools/make_workbench.py --preset pick-place --object snack=cloth
+"$NERV_PYTHON" nerv-assets/tools/make_workbench.py --preset pick-place --object snack=cloth
 ```
 
 This updates the next startup of that preset. End its current simulation instance before creating another one; changing files does not replace objects in a running model. Restore the standard presets with `--all`.
@@ -36,7 +36,7 @@ This updates the next startup of that preset. End its current simulation instanc
 The sorting scene has the slots `chips`, `cookies` and `drink`. For example:
 
 ```bash
-.venv/bin/python worlds/tools/make_workbench.py --preset sort-snacks --object chips=snack_rigid --object cookies=cloth
+"$NERV_PYTHON" nerv-assets/tools/make_workbench.py --preset sort-snacks --object chips=snack_rigid --object cookies=cloth
 ```
 
 Available catalogue IDs:
@@ -81,7 +81,7 @@ or material lookup table.
 For a direct world-node inspection, with the node-pool ports available:
 
 ```bash
-.venv/bin/python -m nerv.world --world so101-sort-snacks --body arm-lerobot-so101 --http-port 8112 --bus-port 8113
+"$NERV_PYTHON" -m nerv.world --world so101-sort-snacks --body arm-lerobot-so101 --http-port 8112 --bus-port 8113
 ```
 
 This starts a simulation world only. Open its local HTTP page to inspect named cameras. It does not launch an agent or connect hardware. Use the registry route rather than `--arena` to apply the named starting pose. Choose free ports from the project's assigned pool.
@@ -89,8 +89,8 @@ This starts a simulation world only. Open its local HTTP page to inspect named c
 ## Qualification and evidence
 
 ```bash
-.venv/bin/python worlds/tools/check_workbench.py --render-dir worlds/assets/so101 --report temp/workbench/qualification.json
-.venv/bin/python -m pytest tests/test_so101_workbench.py -q
+"$NERV_PYTHON" nerv-assets/tools/check_workbench.py --render-dir nerv-assets/assets/so101 --report temp/workbench/qualification.json
+"$NERV_PYTHON" -m pytest tests/test_so101_workbench.py -q
 ```
 
 Run rendering in a suitable OpenGL environment and follow local GPU scheduling rules. Pure physics checks can use `MUJOCO_GL=disable`; image tests then skip explicitly.

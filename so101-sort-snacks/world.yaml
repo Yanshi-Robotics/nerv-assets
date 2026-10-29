@@ -3,7 +3,7 @@
   "kind": "sim",
   "engine": "mujoco",
   "label": "SO-101: Three snacks into matching baskets",
-  "assets_root": "worlds",
+  "assets_root": "nerv-assets",
   "supports": {
     "arm-lerobot-so101": "build/so101-sort-snacks.xml"
   },

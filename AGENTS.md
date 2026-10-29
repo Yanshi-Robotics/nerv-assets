@@ -1,13 +1,13 @@
-# AGENTS.md · nerv-world (formerly alice-house)
+# AGENTS.md · nerv-assets (formerly alice-house)
 
-> 本仓 = NERV 的 `worlds/` 子模块。`<world>/world.yaml` + `guidance.md` 是给 NERV 的世界描述（`assets_root: worlds` 相对 NERV 仓根）；场景与机器人本体资产照旧；⛔ 不放策略。
+> 本仓 = NERV 的 `nerv-assets/` 子模块。`<world>/world.yaml` + `guidance.md` 是给 NERV 的世界描述（`assets_root: nerv-assets` 相对 NERV 仓根）；场景与机器人本体资产照旧；⛔ 不放策略。
  · 本仓的 agent 入口
 
 先读这一份，然后直接跳到你这次要用的那一节——不必通读。
 
 ## 这个仓是什么（以及不是什么）
 
-**nerv-world** 是 MuJoCo 住宅场景与机器人本体资产库，也是 NERV 的 worlds 子模块。
+**nerv-assets** 是 MuJoCo 住宅场景与机器人本体资产库，也是 NERV 的 nerv-assets 子模块。
 布局定义生成建筑、家具和真实碰撞；本仓提供原生漫游检查工具，不运行常驻服务，也不存运动策略。
 
 住宅场景当前维护 **apt**（曼哈顿两层复式、四时段与可交互家具）和 **house**（三层山坡豪宅与封闭宅地）。
@@ -21,7 +21,7 @@
 |---|---|---|
 | 改屋子（房间、门窗、家具、出生点） | `scenes/<场景>/layout.py`，然后重跑 `tools/make_house.py --scene <场景>` | `build/<场景>-<机器人>.xml` 是**产物**，手改会被下一次重跑覆盖 |
 | 加一个新地方 | `scenes/manifest.py` 追加一条 + 建 `scenes/<key>/layout.py` | 变体名与产物名的规则住 `scenes/manifest.py`，⛔ 别在别处再拼一份 |
-| ⭐ 让某件家具有**真碰撞**（不是一个实心盒） | 在 `decor/hulls.py` 的 `COLLIDE` 里登记 → 跑 `python -m decor.hulls`（要先 `pip install coacd trimesh`） → layout 里给它 `F.mesh_piece(..., collide=True)` | 部件是**按材质**拆的、MuJoCo 又只取凸包，所以"把 contype 打开"没用（实测凸度只有 0.12–0.30）。⛔ 凸块必须带 `solref`，否则快速撞击穿模而慢速测试全绿 |
+| ⭐ 让某件家具有**真碰撞**（不是一个实心盒） | 在 `decor/hulls.py` 的 `COLLIDE` 里登记 → 跑 `python -m decor.hulls`（在托管工具锁中声明 `coacd` 与 `trimesh`） → layout 里给它 `F.mesh_piece(..., collide=True)` | 部件是**按材质**拆的、MuJoCo 又只取凸包，所以"把 contype 打开"没用（实测凸度只有 0.12–0.30）。⛔ 凸块必须带 `solref`，否则快速撞击穿模而慢速测试全绿 |
 | ⭐ 让机器人**坐得下**某件家具 | layout 里加 `SEATS` 条目；沙发用 `F.sofa()` 手写基本体（⛔ 别用真网格） | 座面高上限 **0.36 m** 是从 G1 腿长实测出来的（0.40 滑落 / 0.45 直接倒）；而 `_fit_scale` 只做均匀缩放，压座面会把整件缩成玩具 |
 | ⭐ 摆一个姿态出图 / 做判据 | layout 的 `SIT_POSES`（**按关节名**）+ `scenes/apply_pose.py` | 产物里的机器人站在世界原点，静态渲染拍不到"坐着"；⛔ 按下标声明会随机器人型号静默错位 |
 | ⛔ 改楼梯 | **先读 [`scenes/house/楼梯设计.md`](scenes/house/楼梯设计.md)**，再改 `layout.py` 顶部那几个参数 | 一部双跑楼梯 = 五段、其中两段是平台；踏板数 = 踢面数−1。这两条都栽过跟头，尺寸全是推出来的，单独改一个会让别处悄悄对不上 |
@@ -63,32 +63,34 @@
 
 ## 怎么跑起来
 
+环境和依赖通过 NERV 托管构建准备，保存在 `NERV_HOME`；不要在源码中创建 `.venv`，不要借用其他项目环境。
+将 `NERV_PYTHON` 设为托管构建记录中的验证解释器路径，再执行下面的命令。
+需要新增依赖时修改对应锁文件并重新构建，不直接修改已安装的不可变环境。
+
 ```bash
-pip install mujoco numpy pillow
+"$NERV_PYTHON" -m mujoco.viewer --mjcf=build/house-g1.xml    # 三层山坡豪宅（人形那份）
+"$NERV_PYTHON" -m mujoco.viewer --mjcf=build/apt-g1.xml   # 62 层俯瞰中央公园（人形那份）
 
-python -m mujoco.viewer --mjcf=build/house-g1.xml    # 三层山坡豪宅（人形那份）
-python -m mujoco.viewer --mjcf=build/apt-g1.xml   # 62 层俯瞰中央公园（人形那份）
-
-python tools/make_textures.py        # 改过贴图才需要
-python tools/make_house.py                       # 全场景 × 全机器人
-python tools/make_house.py --scene house --robot g1
-python tools/check_scene.py                      # ⭐ 生成之后必跑
-python tools/walkthrough.py --scene house       # 自己走进去看（--selftest = 无窗口自测）
-python tools/render_residences.py --scene house    # 重出 README 配图
-python tools/make_time_stills.py --scene apt         # 四时段静帧（同时是验收门）
+"$NERV_PYTHON" tools/make_textures.py        # 改过贴图才需要
+"$NERV_PYTHON" tools/make_house.py                       # 全场景 × 全机器人
+"$NERV_PYTHON" tools/make_house.py --scene house --robot g1
+"$NERV_PYTHON" tools/check_scene.py                      # ⭐ 生成之后必跑
+"$NERV_PYTHON" tools/walkthrough.py --scene house       # 自己走进去看（--selftest = 无窗口自测）
+"$NERV_PYTHON" tools/render_residences.py --scene house    # 重出 README 配图
+"$NERV_PYTHON" tools/make_time_stills.py --scene apt         # 四时段静帧（同时是验收门）
 ```
 
 apt 的贴图与 2716 栋楼**已入库**，clone 下来直接能编译；下面这些只在想改它们时才跑。
 ⚠️ **家具网格是例外**：字节永不入库，裸 clone 上 apt 的家具是素盒子，直到你拉下来。
 
 ```bash
-pip install trimesh fast-simplification   # 只有下载/转换那一侧要它，⛔ 生成器不许 import
+# Asset conversion requires trimesh and fast-simplification in the managed tool lock; generators must not import them.
 
-python tools/fetch_assets.py            # CC0 室内材质
-python tools/make_view.py --all         # 天空六面 · 公园航拍 · 2716 栋楼
-python -m decor.fetch             # 家具网格（Poly Haven CC0 + Objaverse CC-BY，逐件核许可）
-python -m decor.robocasa          # 厨房电器（RoboCasa，CC-BY-4.0）
-python -m decor.calibrate         # ⛔ 上面两条只要跑过，这条必跑（见红线）
+"$NERV_PYTHON" tools/fetch_assets.py            # CC0 室内材质
+"$NERV_PYTHON" tools/make_view.py --all         # 天空六面 · 公园航拍 · 2716 栋楼
+"$NERV_PYTHON" -m decor.fetch             # 家具网格（Poly Haven CC0 + Objaverse CC-BY，逐件核许可）
+"$NERV_PYTHON" -m decor.robocasa          # 厨房电器（RoboCasa，CC-BY-4.0）
+"$NERV_PYTHON" -m decor.calibrate         # ⛔ 上面两条只要跑过，这条必跑（见红线）
 ```
 
 **要让机器人真走起来**：策略不在本仓。消费方 NERV从自己的策略发布架拿 `policy.onnx`，

@@ -98,7 +98,7 @@ A clean export containing only staged repository files regenerated and compiled 
 scene/robot combinations without downloaded furniture. The [fresh-checkout result](verification/structure/fresh-checkout.json)
 confirms the simplified mode documented in Quick Start; it does not claim full mesh fidelity.
 
-Run the commands from the nerv-world root after the [asset setup](../../interactions/README.md#asset-setup):
+Run the commands from the nerv-assets root after the [asset setup](../../interactions/README.md#asset-setup):
 
 ```bash
 python tools/make_city_textures.py

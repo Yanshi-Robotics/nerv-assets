@@ -10,7 +10,7 @@ import importlib.util
 import os
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # nerv-world 仓根
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # nerv-assets 仓根
 
 
 SCENES: dict[str, dict] = {

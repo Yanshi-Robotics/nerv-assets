@@ -435,7 +435,7 @@ def main(argv=None):
                 "kind": "sim",
                 "engine": "mujoco",
                 "label": f"SO-101: {metadata['label']}",
-                "assets_root": "worlds",
+                "assets_root": "nerv-assets",
                 "supports": {"arm-lerobot-so101": f"build/so101-{preset}.xml"},
                 "spawn": {"initial_joints": metadata["initial_joints"]},
                 "ambient": [],

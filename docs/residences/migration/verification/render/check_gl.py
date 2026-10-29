@@ -1,5 +1,5 @@
 """2026-09-07: real renderer error checks for canonical residence light/texture bindings.
-Run from the nerv-world root with MUJOCO_GL=egl on the host GPU queue.
+Run from the nerv-assets root with MUJOCO_GL=egl on the host GPU queue.
 """
 import json
 import sys

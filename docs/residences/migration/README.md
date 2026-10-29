@@ -44,7 +44,7 @@ Current checks and actual camera measurements are in the [validation record](val
 ## Recover the old maps
 
 The complete four-scene version is saved in the published revision
-[`7fb134f53c293474a8ead488e653f6fdc09c50ff`](https://github.com/Yanshi-Robotics/nerv-world/tree/7fb134f53c293474a8ead488e653f6fdc09c50ff).
+[`7fb134f53c293474a8ead488e653f6fdc09c50ff`](https://github.com/Yanshi-Robotics/nerv-assets/tree/7fb134f53c293474a8ead488e653f6fdc09c50ff).
 Use a separate checkout of that revision to reproduce old layouts and screenshots; do not
 restore only an old XML into the current scene catalogue. Downloaded furniture bytes remain
 outside Git and use the asset setup documented in that revision.

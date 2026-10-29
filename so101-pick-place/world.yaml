@@ -3,7 +3,7 @@
   "kind": "sim",
   "engine": "mujoco",
   "label": "SO-101: Single snack into basket",
-  "assets_root": "worlds",
+  "assets_root": "nerv-assets",
   "supports": {
     "arm-lerobot-so101": "build/so101-pick-place.xml"
   },

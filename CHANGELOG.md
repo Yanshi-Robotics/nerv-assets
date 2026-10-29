@@ -1,6 +1,13 @@
-# nerv-world Changelog
+# nerv-assets Changelog
 
 ## [Unreleased]
+
+### 2026-10-29 asset checkout naming
+
+- Use `nerv-assets/` as the NERV source submodule path in descriptors and generators.
+- Update repository links and developer commands to use managed environments outside
+  the source checkout. Existing scene IDs, geometry and policy contracts are unchanged.
+
 
 ### 2026-10-20 SO-101 workbench
 

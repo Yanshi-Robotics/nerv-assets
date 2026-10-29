@@ -1,4 +1,4 @@
-# nerv-world
+# nerv-assets
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![Simulator: MuJoCo](https://img.shields.io/badge/simulator-MuJoCo-blue)](https://mujoco.org)
 
@@ -136,16 +136,13 @@ The west pool terrace at night, captured with MuJoCo's native renderer.
 
 ## Quick Start
 
-Python 3.10 or later is required. From a standalone checkout:
+Use a simulation or validation interpreter prepared by the [NERV managed build](https://github.com/Yanshi-Robotics/nerv/blob/main/CONTRIBUTING.md#build-outside-the-checkout). Set `NERV_PYTHON` to its reported absolute interpreter path before running these commands. Environments and dependencies stay under `NERV_HOME`; do not create a `.venv` in the asset checkout. The following commands use a standalone asset checkout:
 
 ```bash
-git clone https://github.com/Yanshi-Robotics/nerv-world.git
-cd nerv-world
-python -m venv .venv
-source .venv/bin/activate
-pip install mujoco numpy pillow glfw
-python tools/make_house.py --scene apt
-python tools/walkthrough.py --scene apt --robot g1
+git clone https://github.com/Yanshi-Robotics/nerv-assets.git
+cd nerv-assets
+"$NERV_PYTHON" tools/make_house.py --scene apt
+"$NERV_PYTHON" tools/walkthrough.py --scene apt --robot g1
 ```
 
 A fresh clone generates simplified furniture where downloaded meshes are unavailable.
@@ -162,18 +159,18 @@ This camera movement is an inspection tool, not robot locomotion.
 Other scene and robot combinations use the same generator:
 
 ```bash
-python tools/make_house.py --scene house --robot go2
-python -m mujoco.viewer --mjcf=build/house-go2.xml
-python tools/check_scene.py --scene apt
-python tools/check_interactions.py
-python tools/walkthrough.py --scene apt --selftest
-python tools/check_residences.py
+"$NERV_PYTHON" tools/make_house.py --scene house --robot go2
+"$NERV_PYTHON" -m mujoco.viewer --mjcf=build/house-go2.xml
+"$NERV_PYTHON" tools/check_scene.py --scene apt
+"$NERV_PYTHON" tools/check_interactions.py
+"$NERV_PYTHON" tools/walkthrough.py --scene apt --selftest
+"$NERV_PYTHON" tools/check_residences.py
 ```
 
-For NERV, this repository is the `worlds/` submodule. The descriptors in
+For NERV, this repository is the `nerv-assets/` submodule. The descriptors in
 [house/world.yaml](house/world.yaml) and [apt/world.yaml](apt/world.yaml) select the scene
-and G1 body. Locomotion policies live in [nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies),
-not in this repository. See [NERV](https://github.com/Yanshi-Robotics/nerv) for its launcher.
+and G1 body. Published policy sources are selected through the [NERV policy guide](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/motion-policies.md);
+[nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies) retains legacy history and migration inputs. This repository contains no policy weights. See [NERV](https://github.com/Yanshi-Robotics/nerv) for its launcher.
 
 ## World Explore
 
@@ -192,12 +189,12 @@ After the [furniture asset setup](docs/interactions/README.md#asset-setup), prep
 from this repository:
 
 ```bash
-pip install -r requirements-explore.txt
-python tools/make_house.py --scene apt
-python tools/make_house.py --scene house
-python tools/export_explore.py --scene apt
-python tools/export_explore.py --scene house
-python tools/check_explore.py
+# Declare requirements-explore.txt dependencies in the managed tool lock before export.
+"$NERV_PYTHON" tools/make_house.py --scene apt
+"$NERV_PYTHON" tools/make_house.py --scene house
+"$NERV_PYTHON" tools/export_explore.py --scene apt
+"$NERV_PYTHON" tools/export_explore.py --scene house
+"$NERV_PYTHON" tools/check_explore.py
 ```
 
 Each export writes `scene.glb` and `manifest.json` to `.cache/explore/<scene>/`. NERV checks
