@@ -11,9 +11,24 @@ the World Explore images show the separate Three.js browser guide.
 
 ![house: hillside mansion, lawn and pool](docs/images/house/X1-整栋外景.png)
 
-[Scenes](#scenes) · [Quick Start](#quick-start) · [World Explore](#world-explore) · [Interactive furniture](docs/interactions/README.md) · [Residence guide](docs/residences/README.md)
+[Scenes](#scenes) · [Ecosystem & Pipeline](#ecosystem--pipeline) · [Quick Start](#quick-start) · [World Explore](#world-explore) · [Interactive furniture](docs/interactions/README.md) · [Residence guide](docs/residences/README.md)
 
 **AI agents:** read [AGENTS.md](AGENTS.md) before changing the repository.
+
+## Ecosystem & Pipeline
+
+`nerv-assets` provides **procedural geometry, interactive physics, and robot bodies only** — zero locomotion policy weights. Scenes and robot bodies compose cleanly at build time and plug into [NERV](https://github.com/Yanshi-Robotics/nerv) as the `nerv-assets/` submodule:
+
+<p align="center">
+  <img src="docs/images/diagrams/en/assets-in-nerv.svg" alt="nerv-assets Procedural Pipeline and NERV Ecosystem Boundary" width="100%" />
+</p>
+
+| Repository | Visibility | Role in the NERV Stack |
+| :--- | :--- | :--- |
+| [**`nerv`**](https://github.com/Yanshi-Robotics/nerv) | Public (Core) | Model-agnostic robot platform: Host, Brain Core, Runtime, World, MCP server, safety interlocks, and CLI |
+| **`nerv-assets`** *(this repo)* | Public | Procedural MuJoCo residential scenes (`apt`, `house`), SO-101 workbenches, and Unitree G1/Go2 robot bodies (no policy weights) |
+| [**`nerv-policies`**](https://github.com/Yanshi-Robotics/nerv-policies) | Public | Versioned locomotion ONNX policies, `contract.json` deployment contracts, and `release.yaml` actuator manifests |
+| **`nerv-harness`** | Private preview | Standalone multi-agent Swarm host for heterogeneous external AI models collaborating over NERV MCP |
 
 ## SO-101 workbench
 
@@ -71,8 +86,8 @@ clears the interaction forces.
 The refrigerator task requires the whole can inside the marked middle-shelf volume in the
 right compartment, released onto that shelf and stably supported before the door is closed.
 Its evaluator checks geometry, motion and actual contacts; holding the can in place does not
-complete the task. See the [running NERV validation](https://github.com/Yanshi-Robotics/nerv/tree/main/docs/validation/world-explore)
-for physical repetitions, browser operation and interruption tests.
+complete the task. See the [NERV asset & scene guide](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/assets.md)
+for integration contracts, scene checks and runtime boundaries.
 
 The native walkthrough retains its own inspection controls. The released G1 policy provides
 walking and turning; autonomous grasping, opening, sitting down and stair climbing require
@@ -169,8 +184,10 @@ Other scene and robot combinations use the same generator:
 
 For NERV, this repository is the `nerv-assets/` submodule. The descriptors in
 [house/world.yaml](house/world.yaml) and [apt/world.yaml](apt/world.yaml) select the scene
-and G1 body. Published policy sources are selected through the [NERV policy guide](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/motion-policies.md);
-[nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies) retains legacy history and migration inputs. This repository contains no policy weights. See [NERV](https://github.com/Yanshi-Robotics/nerv) for its launcher.
+and G1 body. Versioned locomotion policies and contracts live in the companion
+[nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies) shelf and are wired via the
+[NERV policy guide](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/motion-policies.md).
+This repository contains no policy weights. See [NERV](https://github.com/Yanshi-Robotics/nerv) for its launcher.
 
 ## World Explore
 
@@ -210,8 +227,12 @@ the two selections independent. Downloaded assets and temporary outputs remain o
 
 - [Residence geometry, rendering and NERV checks](docs/residences/README.md)
 - [Interactive furniture architecture and task evaluation](docs/interactions/README.md)
-- [NERV interaction, route, camera and browser validation](https://github.com/Yanshi-Robotics/nerv/tree/main/docs/validation/world-explore)
+- [NERV asset, scene and world-library integration guide](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/assets.md)
 - [Changelog](CHANGELOG.md)
+
+## Contributors
+
+Maintained by **Yanshi Robotics** with engineering assistance from **Gemini**, **Codex**, and **DeepSeek Harness**.
 
 ## License
 

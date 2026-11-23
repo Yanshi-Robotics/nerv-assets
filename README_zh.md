@@ -10,9 +10,24 @@ World Explore 配图则来自独立的 Three.js 浏览器导览。
 
 ![house：山坡豪宅、草坪与泳池](docs/images/house/X1-整栋外景.png)
 
-[场景](#场景) · [快速开始](#快速开始) · [三维导览](#三维导览) · [可交互家具](docs/interactions/README.md) · [住宅指南](docs/residences/README.md)
+[场景](#场景) · [生态与构建管线](#生态与构建管线) · [快速开始](#快速开始) · [三维导览](#三维导览) · [可交互家具](docs/interactions/README.md) · [住宅指南](docs/residences/README.md)
 
 **AI agent**：修改仓库前请阅读 [AGENTS.md](AGENTS.md)。
+
+## 生态与构建管线
+
+`nerv-assets` **只负责程序化建筑几何、可交互物理与机器人机身模型**，不包含任何运动策略权重。场景与机器人在构建期按需组合，并作为 `nerv-assets/` 子模块接入 [NERV](https://github.com/Yanshi-Robotics/nerv)：
+
+<p align="center">
+  <img src="docs/images/diagrams/zh/assets-in-nerv.svg" alt="nerv-assets 程序化构建管线与 NERV 四仓边界图" width="100%" />
+</p>
+
+| 仓库 | 可见性 | 在 NERV 体系中的职责 |
+| :--- | :--- | :--- |
+| [**`nerv`**](https://github.com/Yanshi-Robotics/nerv) | 公开（核心仓） | 模型无关的机器人平台底座：Host、Brain Core、Runtime、World、MCP 服务端、安全联锁与 CLI |
+| **`nerv-assets`**（本仓库） | 公开 | 程序化 MuJoCo 住宅场景（`apt`、`house`）、SO-101 机械臂工作台与 Unitree G1/Go2 机身资产（无策略权重） |
+| [**`nerv-policies`**](https://github.com/Yanshi-Robotics/nerv-policies) | 公开 | 版本化运动 ONNX 策略权重、`contract.json` 部署契约与 `release.yaml` 执行器清单 |
+| **`nerv-harness`** | 私有预览 | 面向多厂商异构模型通过 NERV MCP 安全协作的独立多 Agent Swarm 宿主 |
 
 ## SO-101 桌面操作
 
@@ -62,7 +77,7 @@ NERV 的**场景测试**面板已接入 22 个电器关节和九个可移动物�
 
 冰箱任务要求罐子整体进入右侧冷藏室标出的中层目标区域，松手后由指定搁板稳定承托，再关闭冰箱门。
 任务根据几何范围、实际运动和真实接触判定，抓住罐子悬停在目标内不能完成任务。
-物理重复测试、浏览器操作及中断检查见 [NERV 运行验收](https://github.com/Yanshi-Robotics/nerv/tree/main/docs/validation/world-explore)。
+物理集成契约、场景检查与运行时边界见 [NERV 资产与场景集成指南](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/assets.md)。
 
 原生漫游仍保留独立的检查器操作。已发布的 G1 策略提供行走和转向；自主抓取、开门、坐下和上下楼梯需要额外的机器人技能。
 坐姿配图来自真实物理沉降，不代表自主坐下策略。
@@ -147,7 +162,8 @@ cd nerv-assets
 ```
 
 在 NERV 中，本仓库位于 `nerv-assets/` 子模块。[house/world.yaml](house/world.yaml) 和 [apt/world.yaml](apt/world.yaml)
-定义场景与 G1 身体的组合。策略来源通过 [NERV 策略指南](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/motion-policies.md)选择；[nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies) 保留旧版历史与迁移材料，资产仓库不存放策略权重。
+定义场景与 G1 身体的组合。版本化运动策略与部署契约存放在配套仓库 [nerv-policies](https://github.com/Yanshi-Robotics/nerv-policies)，
+并通过 [NERV 策略指南](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/motion-policies.md)接入；本资产仓库不存放策略权重。
 启动方式见 [NERV](https://github.com/Yanshi-Robotics/nerv)。
 
 ## 三维导览
@@ -184,8 +200,12 @@ NERV 会核对源指纹和资源哈希；缺失、过期或被修改的导出会
 
 - [住宅几何、配图与 NERV 检查](docs/residences/README.md)
 - [家具交互结构与任务判定](docs/interactions/README.md)
-- [NERV 交互、路线、相机与浏览器验收](https://github.com/Yanshi-Robotics/nerv/tree/main/docs/validation/world-explore)
+- [NERV 资产、场景与世界库集成指南](https://github.com/Yanshi-Robotics/nerv/blob/main/guides/assets.md)
 - [变更记录](CHANGELOG.md)
+
+## 贡献者
+
+由 **偃师造物（Yanshi Robotics）** 维护，**Gemini**、**Codex** 与 **DeepSeek Harness** 协同参与工程实现与资产文档维护。
 
 ## 许可
 
